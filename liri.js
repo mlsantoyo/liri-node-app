@@ -3,6 +3,8 @@ var Twitter = require('twitter');
 var fs = require('fs');
 var Spotify = require('node-spotify-api');
 
+
+
 // code to get the data from keys.js 
 
 var twitterKeys = require('./keys.js');
@@ -20,6 +22,18 @@ var client = new Twitter({
 
 var command = process.argv[2];
 
+var input = "";
+var nodeArgs = process.argv;
+
+for (var i=3; i < nodeArgs.length; i++){
+  if (i > 3 && i < nodeArgs.length){
+    input = input + "+" + nodeArgs[i];
+  } else{
+    input = input + nodeArgs[i];
+  }
+}
+
+
 //use switch case to list all the commands: my-tweets, spotify-this-song, movie-this, do-what-it-says
 switch (command) {
 	case 'my-tweets':
@@ -27,7 +41,11 @@ switch (command) {
 	break;
 
 	case 'spotify-this-song':
-	spotify();
+	 if (input){
+    spotify(input);
+  } else {
+    spotify('The Sign Ace of Base');
+  }
 	break;
 
 	case 'movie-this':
@@ -65,14 +83,14 @@ function myTweets() {
     });
   };
 
-  function spotify() {
+  function spotify(input) {
 
   	var spotify = new Spotify({
   		id: '5fbd873d512145ef99f5bd94287ee12e',
   		secret: '95b557199e174647afcd06b5c233fc82'
   	});
 
-  	spotify.search({ type: 'track', query: 'Like a stone' }, function(err, data) {
+  	spotify.search({ type: 'track', query: input }, function(err, data) {
   		if (err) {
   			return console.log('Error occurred: ' + err);
   		}
