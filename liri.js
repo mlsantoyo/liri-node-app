@@ -1,6 +1,6 @@
 // require nmps
 var Twitter = require('twitter');
-// var fs = require('fs');
+var fs = require('fs');
 var Spotify = require('node-spotify-api');
 var request = require("request");
 
@@ -23,7 +23,11 @@ var client = new Twitter({
 
 var command = process.argv[2];
 
+//declare a variable to hold the user's input
 var input = "";
+
+//declare a variable to loop through multiple word inputs by user
+//the loop goes through each input and adds it to the previous to make one string that will be used as the search criteria
 var nodeArgs = process.argv;
 
 for (var i=3; i < nodeArgs.length; i++){
@@ -60,16 +64,19 @@ switch (command) {
   case 'do-what-it-says':
   dwis();
   break;
+
+  default:
+    console.log("Sorry....your command is invalid. Please use my-tweets, spotify-this-song, movie-this, or do-what-it-says");
 };
 
 //node liri.js my-tweets shows last 20 tweets and when they were created in your terminal/bash window
 function myTweets() {
-	// var client = new Twitter;
+
   var params = {screen_name: 'MaltNectar', count: 20};
   client.get('statuses/user_timeline', params, function(error, tweetData, response) {
     if (!error) {
 
-      console.log('<<<<<<<<<<<<<<<< My Tweets >>>>>>>>>>>>>>>>');
+      console.log('<<<<<<<<<<<<<<<< My  Tweets >>>>>>>>>>>>>>>>');
       tweetData.forEach(function(obj) {
         console.log('--------------------------');
         console.log('Time: ' + obj.created_at);
@@ -77,11 +84,8 @@ function myTweets() {
         console.log('--------------------------');
 
       });
-      console.log('===========================================');
-        // console.log(' ');
-        // console.log(tweets);
-
-        // console.log(tweetData);
+      console.log('<<<<<<<<<<<<<<<<<<<<<<End>>>>>>>>>>>>>>>>>>>>>>');
+        
       } else {
         console.log(error);
       }
@@ -100,12 +104,12 @@ function spotify(input) {
    return console.log('Error occurred: ' + err);
  }
 
- console.log('================ Song Info ================');
+ console.log('<<<<<<<<<<<<<<<< Track Info >>>>>>>>>>>>>>>>');
  console.log('Artist: ' + data.tracks.items[0].album.artists[0].name);
  console.log('Name: ' + data.tracks.items[0].name);
  console.log('Link: ' + data.tracks.items[0].preview_url);
  console.log('Album: ' + data.tracks.items[0].album.name);
- console.log('===========================================');
+ console.log('<<<<<<<<<<<<<<<<<<< End  >>>>>>>>>>>>>>>>>>>');
 
     // console.log(JSON.stringify(data, null, " 	"));
   });
@@ -121,15 +125,16 @@ function movie(input) {
 
       var body = JSON.parse(body);
 
+      console.log('<<<<<<<<<<<<<<<< Movie Info >>>>>>>>>>>>>>>>');
       console.log("Title: " + body.Title);
       console.log("Release Year: " + body.Year);
       console.log("IMdB Rating: " + body.imdbRating);
+      console.log("Rotten Tomatoes Rating: " + body.tomatoRating);
       console.log("Country: " + body.Country);
       console.log("Language: " + body.Language);
       console.log("Plot: " + body.Plot);
       console.log("Actors: " + body.Actors);
-      console.log("Rotten Tomatoes Rating: " + body.tomatoRating);
-      console.log("Rotten Tomatoes URL: " + body.tomatoURL);
+      console.log('<<<<<<<<<<<<<<<<<<< End  >>>>>>>>>>>>>>>>>>>');
 
     } else {
       console.log('Error occurred.')
@@ -137,3 +142,34 @@ function movie(input) {
    }); 
   };
   
+ function dwis() {
+
+  fs.readFile('random.txt', 'utf8', function(err,data){
+
+  
+  var contents = data.toString();
+  var contArray = contents.split(",");
+
+  // console.log(contArray);
+
+
+
+  var randomFunction = contArray[0];
+  var randomArgument = contArray[1];
+
+  switch (randomFunction) {
+    case 'my-tweets':
+    randomFunction = myTweets();
+    break;
+
+    case 'spotify-this-song':
+    randomFunction = spotify(randomArgument);
+    break;
+
+    case 'movie-this':
+    randomFunction = movie(randomArgument);
+    break;
+
+  };
+});
+};
