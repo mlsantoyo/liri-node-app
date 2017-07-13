@@ -1,6 +1,7 @@
 // require nmps
 var Twitter = require('twitter');
 var fs = require('fs');
+var Spotify = require('node-spotify-api');
 
 // code to get the data from keys.js 
 
@@ -62,4 +63,28 @@ function myTweets() {
         console.log(error);
       }
     });
+  };
+
+  function spotify() {
+
+  	var spotify = new Spotify({
+  		id: '5fbd873d512145ef99f5bd94287ee12e',
+  		secret: '95b557199e174647afcd06b5c233fc82'
+  	});
+
+  	spotify.search({ type: 'track', query: 'Like a stone' }, function(err, data) {
+  		if (err) {
+  			return console.log('Error occurred: ' + err);
+  		}
+
+  		console.log('================ Song Info ================');
+        console.log('Artist: ' + data.tracks.items[0].album.artists[0].name);
+        console.log('Name: ' + data.tracks.items[0].name);
+        console.log('Link: ' + data.tracks.items[0].preview_url);
+        console.log('Album: ' + data.tracks.items[0].album.name);
+        console.log('===========================================');
+
+    // console.log(JSON.stringify(data, null, " 	"));
+  	});
+
   };
